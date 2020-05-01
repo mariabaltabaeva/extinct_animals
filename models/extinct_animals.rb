@@ -38,4 +38,35 @@ require_relative 'animal'
       add_animal(row_hash["name"], row_hash["group"], row_hash["year_of_extinguishing"])
     end
   end
+
+  def binary_search(name)
+    lower = 0
+    upper = animals.length - 1
+    while lower <= upper
+      mid = (lower + upper) / 2
+      mid_name = animals[mid].name
+      if name == mid_name
+        return animals[mid]
+      elsif name < mid_name
+        upper = mid -1
+      elsif name > mid_name
+        lower = mid + 1
+      end
+    end
+
+    return nil
+  end
+
+  def iterative_search(name)
+    i = 0
+    last = animals.length - 1
+    while i <= last
+      if animals[i] != name
+        i += 1
+      else
+        return name
+      end
+        return nil
+    end
+  end
 end

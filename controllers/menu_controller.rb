@@ -76,7 +76,18 @@ class MenuController
      end
 
      def search_animals
+       print "Search by name: "
+       name =  gets.chomp
+       match = extinct_animals.binary_search(name)
+       system "clear"
+       if match
+         puts match.to_s
+         search_submenu(match)
+       else
+         puts "No match found for #{name}"
+       end
      end
+
 
      def view_animal_num
        system "clear"
@@ -104,7 +115,10 @@ class MenuController
        case selection
        when "n"
        when "d"
+         delete_animal(animal)
        when "e"
+         edit_animal(animal)
+         animal_submenu(animal)
        when "m"
          system "clear"
          main_menu
@@ -115,6 +129,68 @@ class MenuController
        end
      end
 
-     def search_animals
+     def read_csv
+       print "Enter CSV file to import: "
+       file_name = gets.chomp
+
+       if file_name.empty?
+         system "clear"
+         puts "No CSV file read"
+         main_menu
+       end
+
+       begin
+         animal_count = extinct_animals.import_from_csv(file_name).count
+         systme "clear"
+         puts "#{entry_count} new animals added from #{file_name}"
+       rescue
+         puts "#{file_name} is not a valid CSV file, please enter the name of a valid CSV file"
+         read_csv
      end
-  end
+   end
+
+     def delete_animal(animal)
+       extinct_animals.animals.delete(animal)
+       puts "#{animal.name} has been deleted"
+     end
+
+     def edit_animal(animal)
+       print "Updated name: "
+       name = gets.chomp
+       print "Updated group: "
+       group = gets.chomp
+       print "Updated year_of_extinguishing: "
+       year_of_extinguishing = gets.chomp
+       animal.name = name if !name.empty?
+       animal.group = group if !group.empty?
+       animal.year_of_extinguishing = year_of_extinguishing if !year_of_extinguishing.empty?
+       system "clear"
+       puts "Updated animal: "
+       puts animal
+     end
+
+     def search_submenu(animal)
+       puts "\nd - delete entry"
+       puts "e - edit this animal"
+       puts "m - return to main menu"
+       selection = gets.chomp
+       case selection
+       when "d"
+         system "clear"
+         delete_animal(animal)
+         main_menu
+       when "e"
+         edit_animal(animal)
+         system "clear"
+         main_menu
+       when "m"
+         system "clear"
+         main_menu
+       else
+         system "clear"
+         puts "#{selection} is not a valid input"
+         puts animal.to_s
+         search_submenu(animal)
+       end
+     end
+   end
